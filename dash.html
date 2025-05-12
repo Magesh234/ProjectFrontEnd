@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech.Care Healthcare Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #1ccab8;
+            --light-gray: #f5f7f9;
+            --border-color: #e8eaed;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7f9;
+        }
+        
+        .header {
+            background-color: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 24px;
+        }
+        
+        .breadcrumb-item a {
+            color: #888;
+            text-decoration: none;
+        }
+        
+        .navbar {
+            background-color: white;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-icon {
+            width: 30px;
+            height: 30px;
+            background-color: var(--primary-color);
+            margin-right: 8px;
+            clip-path: polygon(0 0, 100% 0, 100% 60%, 60% 60%, 60% 100%, 0 100%);
+        }
+        
+        .logo-text {
+            font-weight: bold;
+            font-size: 18px;
+            color: #333;
+        }
+        
+        .nav-link {
+            color: #555;
+            padding: 16px 20px;
+            font-size: 14px;
+        }
+        
+        .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 6px;
+        }
+        
+        .doctor-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .doctor-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 12px;
+            background-color: #f0f0f0;
+        }
+        
+        .doctor-name {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+        
+        .doctor-role {
+            color: #888;
+            font-size: 12px;
+        }
+        
+        .main-content {
+            display: flex;
+            padding: 24px;
+            gap: 24px;
+        }
+        
+        .sidebar {
+            width: 260px;
+            background-color: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .sidebar-header {
+            font-weight: bold;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .sidebar-search {
+            position: relative;
+            margin-bottom: 16px;
+        }
+        
+        .sidebar-search input {
+            width: 100%;
+            padding: 8px 12px 8px 36px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            font-size: 14px;
+        }
+        
+        .sidebar-search i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+        }
+        
+        .patient-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .patient-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 8px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            position: relative;
+        }
+        
+        .patient-item.active {
+            background-color: #e6fbf9;
+        }
+        
+        .patient-image {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            margin-right: 12px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .patient-info {
+            flex-grow: 1;
+        }
+        
+        .patient-name {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        
+        .patient-details {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .patient-actions {
+            color: #888;
+            cursor: pointer;
+        }
+        
+        .content {
+            flex-grow: 1;
+        }
+        
+        .diagnosis-history {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .section-header {
+            font-weight: bold;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .chart-container {
+            height: 200px;
+            margin-bottom: 12px;
+            background-color: #f5f5f5; /* Added grey background */
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+/* Legend styling for blood pressure chart */
+        .legend {
+            display: flex;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+            font-size: 13px;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+
+        /* Specific colors for systolic and diastolic indicators */
+        .legend-dot.systolic {
+            background-color: #ff6666;
+        }
+
+        .legend-dot.diastolic {
+            background-color: #6666ff;
+        }
+
+        /* Styling for specific blood pressure values */
+        .systolic-value {
+            color: #ff6666;
+            font-weight: bold;
+        }
+
+        .diastolic-value {
+            color: #6666ff;
+            font-weight: bold;
+        }
+
+        .vital-cards {
+            display: flex;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .vital-card {
+            flex: 1;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        /* Specific background colors for each vital card */
+        .vital-card:nth-child(1) {
+            background-color: #e6f7ff;
+        }
+
+        .vital-card:nth-child(2) {
+            background-color: #fff2e6;
+        }
+
+        .vital-card:nth-child(3) {
+            background-color: #ffe6e6;
+        }
+
+        .vital-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+
+        .icon-respiratory {
+            background-color: #e6f7ff;
+            color: #0099ff;
+        }
+
+        .icon-temperature {
+            background-color: #fff2e6;
+            color: #ff6600;
+        }
+
+        .icon-heart {
+            background-color: #ffe6e6;
+            color: #ff3333;
+        }
+
+        .vital-title {
+            font-size: 13px;
+            color: #777;
+            margin-bottom: 4px;
+        }
+
+        .vital-value {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .vital-status {
+            font-size: 12px;
+            color: #777;
+            padding: 4px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .status-normal {
+            background-color: #e6f7ff;
+            color: #0099ff;
+        }
+
+        .status-low {
+            background-color: #ffe6e6;
+            color: #ff3333;
+        }
+        .diagnostic-list {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .diagnostic-table {
+            width: 100%;
+            font-size: 14px;
+        }
+        
+        .diagnostic-table th {
+            color: #666;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 16px;
+        }
+        
+        .diagnostic-table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+        
+        .status-pill {
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            display: inline-block;
+        }
+        
+        .status-observation {
+            background-color: #f0f7ff;
+            color: #0066cc;
+        }
+        
+        .status-cured {
+            background-color: #e6fff0;
+            color: #00b33c;
+        }
+        
+        .status-inactive {
+            background-color: #f5f5f5;
+            color: #888;
+        }
+        
+        .patient-profile {
+            width: 250px;
+            background-color: white;
+            border-radius: 12px;
+            padding: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+        
+        .profile-header {
+            padding: 24px;
+            text-align: center;
+        }
+        
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 16px;
+        }
+        
+        .profile-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        .profile-info {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .info-item {
+            margin-bottom: 16px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .info-icon {
+            min-width: 24px;
+            margin-right: 12px;
+            color: #666;
+        }
+        
+        .info-content {
+            flex-grow: 1;
+        }
+        
+        .info-label {
+            font-size: 12px;
+            color: #777;
+            margin-bottom: 4px;
+        }
+        
+        .info-value {
+            font-size: 14px;
+        }
+        
+        .lab-results {
+            margin-top: 24px;
+        }
+        
+        .lab-header {
+            padding: 16px 24px;
+            font-weight: bold;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .lab-item {
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .download-icon {
+            color: #888;
+        }
+        
+        .btn-info {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+            border-radius: 24px;
+            padding: 8px 20px;
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header d-flex justify-content-between align-items-center">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item active" aria-current="page">HealthCare Dashboard</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="navbar py-2 px-4">
+        <div class="logo">
+            <div class="logo-icon"></div>
+            <div class="logo-text">Tech.Care</div>
+        </div>
+        
+        <ul class="nav">
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="fas fa-home me-2"></i>Overview</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="#"><i class="fas fa-user-friends me-2"></i>Patients</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="fas fa-calendar me-2"></i>Schedule</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="fas fa-comment me-2"></i>Message</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="fas fa-file-invoice-dollar me-2"></i>Transactions</a>
+            </li>
+        </ul>
+        
+        <div class="doctor-info">
+            <div class="doctor-image">
+                <img src="C:\xampp\htdocs\health\HealthCare Dashboard\sin.png" alt="Doctor" class="w-100 h-100 rounded-circle">
+            </div>
+            <div>
+                <p class="doctor-name">Dr. Jose Simmons</p>
+                <p class="doctor-role">General Practitioner</p>
+            </div>
+            <div class="ms-3">
+                <i class="fas fa-cog"></i>
+            </div>
+            <div class="ms-3">
+                <i class="fas fa-ellipsis-v"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                Patients
+                <i class="fas fa-search"></i>
+            </div>
+            
+            <div class="sidebar-search">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search patients...">
+            </div>
+            
+            <ul class="patient-list">
+  <li class="patient-item">
+    <div class="patient-image" style="background-image: url('http://localhost/health/HealthCare%20Dashboard/Layer%208@2x.png');"></div>
+    <div class="patient-info">
+      <div class="patient-name">Emily Williams</div>
+      <div class="patient-details">Female, 18</div>
+    </div>
+    <div class="patient-actions">
+      <i class="fas fa-ellipsis-h"></i>
+    </div>
+  </li>
+</ul>
+
+                
+                <li class="patient-item">
+                    <div class="patient-image" style="background-image: url('http://localhost/health/HealthCare%20Dashboard/Layer 1@2x.png')"></div>
+                    <div class="patient-info">
+                        <div class="patient-name">Ryan Johnson</div>
+                        <div class="patient-details">Male, 43</div>
+                    </div>
+                    <div class="patient-actions">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </div>
+                </li>
+                
+                <li class="patient-item">
+                    <div class="patient-image" style="background-image: url('http://localhost/health/HealthCare%20Dashboard/Layer 3@2x.png')"></div>
+                    <div class="patient-info">
+                        <div class="patient-name">Brandon Mitchell</div>
+                        <div class="patient-details">Male, 35</div>
+                    </div>
+                    <div class="patient-actions">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </div>
+                </li>
+                
+                <li class="patient-item active">
+                    <div class="patient-image" style="background-image: url('http://localhost/health/HealthCare%20Dashboard/Layer 2@2x.png')"></div>
+                    <div class="patient-info">
+                        <div class="patient-name">Jessica Taylor</div>
+                        <div class="patient-details">Female, 28</div>
+                    </div>
+                    <div class="patient-actions">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </div>
+                </li>
+                
+                <li class="patient-item">
+                    <div class="patient-image" style="background-image: url('http://localhost/health/HealthCare%20Dashboard/Layer 6@2x.png')"></div>
+                    <div class="patient-info">
+                        <div class="patient-name">Samantha Johnson</div>
+                        <div class="patient-details">Female, 56</div>
+                    </div>
+                    <div class="patient-actions">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </div>
+                </li>
+                
+                <li class="patient-item">
+                    <div class="patient-image" style="background-image: url('http://localhost/health/HealthCare%20Dashboard/Layer 12@2x.png')"></div>
+                    <div class="patient-info">
+                        <div class="patient-name">Ashley Martinez</div>
+                        <div class="patient-details">Female, 54</div>
+                    </div>
+                    <div class="patient-actions">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </div>
+                </li>
+                
+                <li class="patient-item">
+                    <div class="patient-image" style="background-image: url('http://localhost/health/HealthCare%20Dashboard/Layer 10@2x.png')"></div>
+                    <div class="patient-info">
+                        <div class="patient-name">Olivia Brown</div>
+                        <div class="patient-details">Female, 32</div>
+                    </div>
+                    <div class="patient-actions">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </div>
+                </li>
+                
+                <li class="patient-item">
+                    <div class="patient-image" style="background-image: url('http://localhost/health/HealthCare%20Dashboard/Layer 9@2x.png')"></div>
+                    <div class="patient-info">
+                        <div class="patient-name">Tyler Davis</div>
+                        <div class="patient-details">Male, 19</div>
+                    </div>
+                    <div class="patient-actions">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </div>
+                </li>
+                
+                <li class="patient-item">
+                    <div class="patient-image" style="background-image: url('http://localhost/health/HealthCare%20Dashboard/Layer 4@2x.png')"></div>
+                    <div class="patient-info">
+                        <div class="patient-name">Kevin Anderson</div>
+                        <div class="patient-details">Male, 27</div>
+                    </div>
+                    <div class="patient-actions">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </div>
+                </li>
+                
+                <li class="patient-item">
+                    <div class="patient-image" style="background-image: url('http://localhost/health/HealthCare%20Dashboard/Layer 5@2x.png')"></div>
+                    <div class="patient-info">
+                        <div class="patient-name">Dylan Thompson</div>
+                        <div class="patient-details">Male, 39</div>
+                    </div>
+                    <div class="patient-actions">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </div>
+                </li>
+                
+                <li class="patient-item">
+                    <div class="patient-image" style="background-image: url('http://localhost/health/HealthCare%20Dashboard/Layer 7@2x.png')"></div>
+                    <div class="patient-info">
+                        <div class="patient-name">Nathan Evans</div>
+                        <div class="patient-details">Male, 58</div>
+                    </div>
+                    <div class="patient-actions">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </div>
+                </li>
+                
+                <li class="patient-item">
+                    <div class="patient-image" style="background-image: url('http://localhost/health/HealthCare%20Dashboard/pexels-photo-1222271@2x.png')"></div>
+                    <div class="patient-info">
+                        <div class="patient-name">Mike Nolan</div>
+                        <div class="patient-details">Male, 42</div>
+                    </div>
+                    <div class="patient-actions">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="content">
+            <div class="diagnosis-history">
+                <div class="section-header">
+                    <div>Diagnosis History</div>
+                    <div class="d-flex align-items-center">
+                        <span class="me-2" style="font-size: 13px; font-weight: normal;">Last 6 months</span>
+                        <i class="fas fa-chevron-down" style="font-size: 12px;"></i>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="bloodPressureChart"></canvas>
+                </div>
+                
+                <div class="d-flex">
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background-color: #9966ff;"></div>
+                        <div>Systolic</div>
+                    </div>
+                    <div class="ms-3" style="color: #9966ff; font-weight: bold; font-size: 13px;">
+                        160
+                    </div>
+                    <div class="ms-3 legend-item">
+                        <div class="legend-dot" style="background-color: #ff6666;"></div>
+                        <div>Higher than Average</div>
+                    </div>
+                </div>
+                
+                <div class="d-flex mt-2">
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background-color: #5599ff;"></div>
+                        <div>Diastolic</div>
+                    </div>
+                    <div class="ms-3" style="color: #5599ff; font-weight: bold; font-size: 13px;">
+                        78
+                    </div>
+                    <div class="ms-3 legend-item">
+                        <div class="legend-dot" style="background-color: #66cc99;"></div>
+                        <div>Lower than Average</div>
+                    </div>
+                </div>
+                
+                <div class="vital-cards">
+                    <div class="vital-card">
+                        <div class="vital-icon icon-respiratory">
+                            <i class="fas fa-lungs"></i>
+                        </div>
+                        <div class="vital-title">Respiratory Rate</div>
+                        <div class="vital-value">20 bpm</div>
+                        <div class="vital-status status-normal">Normal</div>
+                    </div>
+                    
+                    <div class="vital-card">
+                        <div class="vital-icon icon-temperature">
+                            <i class="fas fa-thermometer-half"></i>
+                        </div>
+                        <div class="vital-title">Temperature</div>
+                        <div class="vital-value">98.6°F</div>
+                        <div class="vital-status status-normal">Normal</div>
+                    </div>
+                    
+                    <div class="vital-card">
+                        <div class="vital-icon icon-heart">
+                            <i class="fas fa-heartbeat"></i>
+                        </div>
+                        <div class="vital-title">Heart Rate</div>
+                        <div class="vital-value">78 bpm</div>
+                        <div class="vital-status status-low">Lower than Average</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="diagnostic-list">
+                <div class="section-header">Diagnostic List</div>
+                
+                <table class="diagnostic-table">
+                    <thead>
+                        <tr>
+                            <th>Problem/Diagnosis</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Hypertension</td>
+                            <td>Chronic high blood pressure</td>
+                            <td><span class="status-pill status-observation">Under Observation</span></td>
+                        </tr>
+                        <tr>
+                            <td>Type 2 Diabetes</td>
+                            <td>Insulin resistance and elevated blood sugar</td>
+                            <td><span class="status-pill status-cured">Cured</span></td>
+                        </tr>
+                        <tr>
+                            <td>Asthma</td>
+                            <td>Recurrent episodes of bronchial constriction</td>
+                            <td><span class="status-pill status-inactive">Inactive</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="patient-profile">
+            <div class="profile-header">
+                <div class="profile-image">
+                    <img src="C:\xampp\htdocs\health\HealthCare Dashboard\Layer 2@2x.png" alt="Jessica Taylor" class="w-100 h-100 rounded-circle">
+                </div>
+                <h4 class="profile-name">Jessica Taylor</h4>
+            </div>
+            
+            <div class="profile-info">
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Date Of Birth</div>
+                        <div class="info-value">August 23, 1996</div>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-venus-mars"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Gender</div>
+                        <div class="info-value">Female</div>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Contact Info</div>
+                        <div class="info-value">(415) 555-1234</div>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Emergency Contacts</div>
+                        <div class="info-value">(415) 555-5678</div>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Insurance Provider</div>
+                        <div class="info-value">Sunrise Health Assurance</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <button class="btn btn-info">Show All Information</button>
+            </div>
+            
+            <div class="lab-results">
+                <div class="lab-header">Lab Results</div>
+                
+                <div class="lab-item">
+                    <div>Blood Tests</div>
+                    <div class="download-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                </div>
+                
+                <div class="lab-item">
+                    <div>CT Scans</div>
+                    <div class="download-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                </div>
+                
+                <div class="lab-item">
+                    <div>Radiology Reports</div>
+                    <div class="download-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                </div>
+                
+                <div class="lab-item">
+                    <div>X-Rays</div>
+                    <div class="download-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('bloodPressureChart').getContext('2d');
+            
+            const months = ['Oct. 2023', 'Nov. 2023', 'Dec. 2023', 'Jan. 2024', 'Feb. 2024', 'Mar. 2024'];
+            
+            const systolicData = [120, 125, 160, 125, 160, 160];
+            const diastolicData = [80, 85, 75, 90, 80, 78];
+            
+            const bloodPressureChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [
+                        {
+                            label: 'Systolic',
+                            data: systolicData,
+                            borderColor: '#9966ff',
+                            backgroundColor: 'rgba(153, 102, 255, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            pointBackgroundColor: '#9966ff',
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        },
+                        {
+                            label: 'Diastolic',
+                            data: diastolicData,
+                            borderColor: '#5599ff',
+                            backgroundColor: 'rgba(85, 153, 255, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            pointBackgroundColor: '#5599ff',
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            titleColor: '#333',
+                            bodyColor: '#666',
+                            borderColor: '#ddd',
+                            borderWidth: 1
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 10
+                                },
+                                color: '#888'
+                            }
+                        },
+                        y: {
+                            beginAtZero: false,
+                            min: 60,
+                            max: 180,
+                            ticks: {
+                                stepSize: 20,
+                                font: {
+                                    size: 10
+                                },
+                                color: '#888'
+                            },
+                            grid: {
+                                color: '#f0f0f0'
+                            }
+                        }
+                    },
+                    elements: {
+                        line: {
+                            tension: 0.4
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+    
